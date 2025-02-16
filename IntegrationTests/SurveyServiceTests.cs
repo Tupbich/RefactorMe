@@ -76,7 +76,7 @@ public class SurveyServiceTests(CommonFixture fixture) : IClassFixture<CommonFix
     [Fact]
     public async Task SaveAnswersAsync_SaveForUser3_AnswerAddedAndScoreEquals2()
     {
-        var userId = 3;
+        const int userId = 3;
         
         using var scope = GetSurveyService(out var surveyService);
         
@@ -105,7 +105,7 @@ public class SurveyServiceTests(CommonFixture fixture) : IClassFixture<CommonFix
     [Fact]
     public async Task SaveAnswersAsync_SaveForUser4_AnswerAddedAndScoreEquals0()
     {
-        var userId = 4;
+        const int userId = 4;
         
         using var scope = GetSurveyService(out var surveyService);
         
@@ -134,7 +134,7 @@ public class SurveyServiceTests(CommonFixture fixture) : IClassFixture<CommonFix
     [Fact]
     public async Task SaveAnswersAsync_SaveForUser5_AnswerAddedAndScoreEquals1()
     {
-        var userId = 5;
+        const int userId = 5;
         
         using var scope = GetSurveyService(out var surveyService);
         
@@ -162,7 +162,7 @@ public class SurveyServiceTests(CommonFixture fixture) : IClassFixture<CommonFix
     {
         using var scope = GetSurveyService(out var surveyService);
 
-        var surveyId = 100;
+        const int surveyId = 100;
         var answers = new SurveyAnswersDto
         {
             UserId = 5,
@@ -181,8 +181,8 @@ public class SurveyServiceTests(CommonFixture fixture) : IClassFixture<CommonFix
     {
         using var scope = GetSurveyService(out var surveyService);
 
-        var surveyId = 1;
-        var questionId = 100;
+        const int surveyId = 1;
+        const int questionId = 100;
         var answers = new SurveyAnswersDto
         {
             UserId = 5,
@@ -204,7 +204,7 @@ public class SurveyServiceTests(CommonFixture fixture) : IClassFixture<CommonFix
     {
         using var scope = GetSurveyService(out var surveyService);
 
-        var incorrectBoolean = "incorrectBoolean";
+        const string incorrectBoolean = "incorrectBoolean";
         var answers = new SurveyAnswersDto
         {
             UserId = 5,

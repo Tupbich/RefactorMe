@@ -16,9 +16,6 @@ public class CommonFixture: IDisposable
     public CommonFixture()
     {
         var connectionString = GetConnectionString();
-        // var options = new DbContextOptionsBuilder<AppDbContext>()
-        //     .UseSqlServer(connectionString) // can be switched to UseInMemoryDatabase to test independently of the database engine, or to use Docker
-        //     .Options;
 
         var serviceCollection = new ServiceCollection();
         serviceCollection.AddDbContext<AppDbContext>(opt =>
@@ -138,6 +135,5 @@ public class CommonFixture: IDisposable
         AppDbContext.Dispose();
         ServiceProvider.Dispose();
     }
-    
 
 }
