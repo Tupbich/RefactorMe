@@ -1,14 +1,14 @@
 ﻿namespace RefactorMe.Dto;
 
-public class SurveyAnswersDto
+public record SurveyAnswersDto
 {
-    public class SurveyAnswerDto
+    public record SurveyAnswerDto
     {
-        public int QuestionId { get; set; }
-        public object Value { get; set; }
+        public int QuestionId { get; init; }
+        public object Value { get; init; }
     }
 
-    public int UserId { get; set; }
-    public int SurveyId { get; set; }
-    public SurveyAnswerDto[] Answers { get; set; }
+    public int UserId { get; init; }
+    public int SurveyId { get; init; }
+    public SurveyAnswerDto[] Answers { get; init; }
 }

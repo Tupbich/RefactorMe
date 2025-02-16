@@ -1,0 +1,6 @@
+@RefactorMe.Swagger_HostAddress = http://localhost:5141
+
+GET {{RefactorMe.Swagger_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
