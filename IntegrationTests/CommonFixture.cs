@@ -46,11 +46,10 @@ public class CommonFixture: IDisposable
     
     private void SeedDatabase()
     {
-        // To avoid conflicts on concurrent - use only for GetSurveysByUserAsync tests
+        // Для избежания конфликтов при одновременном запуске - использовать только для SurveyServiceTests.GetSurveysByUserAsync
         AppDbContext.Users.Add(new User { Name = "User one" });
         AppDbContext.Users.Add(new User { Name = "User two" });
-        
-        // To avoid conflicts on concurrent - use only for SaveAnswersAsync tests
+        // Для избежания конфликтов при одновременном запуске - использовать только для SurveyServiceTests.SaveAnswersAsync
         AppDbContext.Users.Add(new User { Name = "User three" });
         AppDbContext.Users.Add(new User { Name = "User four" });
         AppDbContext.Users.Add(new User { Name = "User five" });
