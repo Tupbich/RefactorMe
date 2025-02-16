@@ -5,65 +5,96 @@ using RefactorMe.Dto;
 
 namespace RefactorMe;
 
-public class SurveyService
+public class SurveyService(AppDbContext db)
 {
-    /// <summary>
-    /// Получение опросов для пользователя
-    /// </summary>
-    public async Task<SurveyDto[]> GetSurveys(int userId)
+    public async Task<SurveyDto[]> GetSurveysByUserAsync(int userId)
     {
-        await using var db = new AppDbContext();
-
-        return await db.Surveys
-            .Include(x => x.Questions)
-            .Where(x => x.IsActive && !db.SurveyResults.Any(sr => sr.UserId == userId && sr.SurveyId == x.Id))
-            .Select(x => new SurveyDto()
+        return (
+                await db
+                    .SurveyQuestions
+                    .AsNoTracking()
+                    .Where(x => x.Survey.IsActive 
+                                && db.SurveyResults.Any(sr => sr.UserId == userId && sr.SurveyId == x.SurveyId))
+                    .Select(x => new {x.SurveyId, x.Id, x.Text, x.AnswerType})
+                    .ToArrayAsync()
+            )
+            .GroupBy(q => q.SurveyId)
+            .Select(g => new SurveyDto
             {
-                Id = x.Id,
-                Questions = x.Questions
-                    .Select(q => new SurveyDto.SurveyQuestionDto()
-                    {
-                        Id = q.Id,
-                        Text = q.Text,
-                        Type = q.AnswerType
-                    }).ToArray()
-            }).ToArrayAsync();
+                Id = g.Key,
+                Questions = g.Select(q => new SurveyDto.SurveyQuestionDto
+                {
+                    Id = q.Id,
+                    Type = q.AnswerType,
+                    Text = q.Text
+                }).ToArray()
+            })
+            .ToArray();
     }
-
-    /// <summary>
-    /// Сохранение результатов опроса
-    /// </summary>
-    public async Task SaveAnswers(SurveyAnswersDto value)
+    
+    public async Task SaveAnswersAsync(SurveyAnswersDto value)
     {
-        await using var db = new AppDbContext();
-        await using var tr = await db.Database.BeginTransactionAsync();
+        var score = await CalculateScoreAsync(value.Answers, value.SurveyId);
 
-        var questions = db.SurveyQuestions;
-
-        var s = 0;
-        foreach (var v in value.Answers)
-        {
-            var q = questions.First(x => x.Id == v.QuestionId);
-
-            if (q.AnswerType == SurveyQuestion.QuestionAnswerType.Boolean && (bool)v.Value == true)
-            {
-                s++;
-            }
-            else if (q.AnswerType == SurveyQuestion.QuestionAnswerType.Number && (int)v.Value > q.NumberMin)
-            {
-                s++;
-            }
-        }
-
-        await db.SurveyResults.AddAsync(new SurveyResult()
+        await db.SurveyResults.AddAsync(new SurveyResult
         {
             UserId = value.UserId,
             SurveyId = value.SurveyId,
-            Score = s,
-            CreatedAt = DateTime.Now
+            Score = score,
         });
 
         await db.SaveChangesAsync();
-        await tr.CommitAsync();
+    }
+
+    private async Task<int> CalculateScoreAsync(SurveyAnswersDto.SurveyAnswerDto[] answers, int surveyId)
+    {
+        var questions = await db.SurveyQuestions.AsNoTracking()
+            .Where(x => x.SurveyId == surveyId)
+            .Select(x => new { x.Id, x.AnswerType, x.NumberMin })
+            .ToDictionaryAsync(kvp => kvp.Id, kvp => new { kvp.AnswerType, kvp.NumberMin});
+
+        if (questions.Count == 0)
+        {
+            throw new ArgumentException($"Questions for SurveyId: {surveyId} not found");
+        }
+        
+        var score = 0;
+        foreach (var answer in answers)
+        {
+            if (!questions.TryGetValue(answer.QuestionId, out var question))
+            {
+                throw new ArgumentException($"QuestionId: {answer.QuestionId} with SurveyId: {surveyId} not found");
+            }
+
+            if (question.AnswerType == SurveyQuestion.QuestionAnswerType.Boolean)
+            {
+                if (bool.TryParse(answer.Value.ToString(), out var valueBool))
+                {
+                    if (valueBool)
+                    {
+                        score++;
+                    }
+                }
+                else
+                {
+                    throw new InvalidCastException($"Impossible to cast an answer: {answer.Value} to boolean type");
+                }
+            }
+            else if (question.AnswerType == SurveyQuestion.QuestionAnswerType.Number)
+            {
+                if (int.TryParse(answer.Value.ToString(), out var valueInt))
+                {
+                    if (valueInt > question.NumberMin)
+                    {
+                        score++;
+                    }
+                }
+                else
+                {
+                    throw new InvalidCastException($"Impossible to cast an answer: {answer.Value} to int type");
+                }
+            }
+        }
+        return score;
     }
 }

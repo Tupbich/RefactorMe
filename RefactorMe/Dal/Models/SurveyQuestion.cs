@@ -1,16 +1,18 @@
-﻿namespace RefactorMe.Dal.Models;
+﻿using System.ComponentModel.DataAnnotations;
+using RefactorMe.Dal.Models.Abstract;
 
-public class SurveyQuestion
+namespace RefactorMe.Dal.Models;
+
+public partial class SurveyQuestion : Entity
 {
-    public enum QuestionAnswerType
-    {
-        Boolean,
-        Number
-    }
-
-    public int Id { get; set; }
     public int SurveyId { get; set; }
-    public string Text { get; set; }
+    
     public QuestionAnswerType AnswerType { get; set; }
+    
+    [MaxLength(4000)]
+    public string Text { get; set; }
+    
     public int NumberMin { get; set; }
+    
+    public Survey Survey { get; set; }
 }

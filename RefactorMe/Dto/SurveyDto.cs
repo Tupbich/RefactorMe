@@ -2,15 +2,15 @@
 
 namespace RefactorMe.Dto;
 
-public class SurveyDto
+public record SurveyDto
 {
-    public class SurveyQuestionDto
+    public record SurveyQuestionDto
     {
-        public int Id { get; set; }
-        public SurveyQuestion.QuestionAnswerType Type { get; set; }
-        public string Text { get; set; }
+        public int Id { get; init; }
+        public SurveyQuestion.QuestionAnswerType Type { get; init; }
+        public string Text { get; init; }
     }
 
-    public int Id { get; set; }
-    public SurveyQuestionDto[] Questions { get; set; }
+    public int Id { get; init; }
+    public SurveyQuestionDto[] Questions { get; init; }
 }

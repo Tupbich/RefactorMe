@@ -1,9 +1,12 @@
-﻿namespace RefactorMe.Dal.Models;
+﻿using System.ComponentModel.DataAnnotations;
+using RefactorMe.Dal.Models.Abstract;
 
-public class Survey
+namespace RefactorMe.Dal.Models;
+
+public class Survey : Entity
 {
-    public int Id { get; set; }
+    [MaxLength(4000)]
     public string Name { get; set; }
-    public bool IsActive { get; set; }
+    public bool IsActive { get; set; } = true;
     public ICollection<SurveyQuestion> Questions { get; set; } 
 }

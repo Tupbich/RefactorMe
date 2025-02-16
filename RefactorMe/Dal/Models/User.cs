@@ -1,7 +1,10 @@
-﻿namespace RefactorMe.Dal.Models;
+﻿using System.ComponentModel.DataAnnotations;
+using RefactorMe.Dal.Models.Abstract;
 
-public class User
+namespace RefactorMe.Dal.Models;
+
+public class User : Entity
 {
-    public int Id { get; set; }
+    [MaxLength(100)]
     public string Name { get; set; }
 }
