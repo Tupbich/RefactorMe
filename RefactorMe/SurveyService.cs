@@ -51,7 +51,7 @@ public class SurveyService(AppDbContext db)
         var questions = await db.SurveyQuestions.AsNoTracking()
             .Where(x => x.SurveyId == surveyId)
             .Select(x => new { x.Id, x.AnswerType, x.NumberMin })
-            .ToListAsync();
+            .ToDictionaryAsync(kvp => kvp.Id, kvp => new { kvp.AnswerType, kvp.NumberMin});
 
         if (questions.Count == 0)
         {
@@ -59,17 +59,16 @@ public class SurveyService(AppDbContext db)
         }
         
         var score = 0;
-        foreach (var a in answers)
+        foreach (var answer in answers)
         {
-            var q = questions.FirstOrDefault(x => x.Id == a.QuestionId);
-            if (q == null)
+            if (!questions.TryGetValue(answer.QuestionId, out var question))
             {
-                throw new ArgumentException($"QuestionId: {a.QuestionId} with SurveyId: {surveyId} not found");
+                throw new ArgumentException($"QuestionId: {answer.QuestionId} with SurveyId: {surveyId} not found");
             }
 
-            if (q.AnswerType == SurveyQuestion.QuestionAnswerType.Boolean)
+            if (question.AnswerType == SurveyQuestion.QuestionAnswerType.Boolean)
             {
-                if (bool.TryParse(a.Value.ToString(), out var valueBool))
+                if (bool.TryParse(answer.Value.ToString(), out var valueBool))
                 {
                     if (valueBool)
                     {
@@ -78,21 +77,21 @@ public class SurveyService(AppDbContext db)
                 }
                 else
                 {
-                    throw new InvalidCastException($"Impossible to cast an answer: {a.Value} to boolean type");
+                    throw new InvalidCastException($"Impossible to cast an answer: {answer.Value} to boolean type");
                 }
             }
-            else if (q.AnswerType == SurveyQuestion.QuestionAnswerType.Number)
+            else if (question.AnswerType == SurveyQuestion.QuestionAnswerType.Number)
             {
-                if (int.TryParse(a.Value.ToString(), out var valueInt))
+                if (int.TryParse(answer.Value.ToString(), out var valueInt))
                 {
-                    if (valueInt > q.NumberMin)
+                    if (valueInt > question.NumberMin)
                     {
                         score++;
                     }
                 }
                 else
                 {
-                    throw new InvalidCastException($"Impossible to cast an answer: {a.Value} to int type");
+                    throw new InvalidCastException($"Impossible to cast an answer: {answer.Value} to int type");
                 }
             }
         }
