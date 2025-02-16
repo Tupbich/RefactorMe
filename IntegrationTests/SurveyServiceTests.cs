@@ -160,9 +160,10 @@ public class SurveyServiceTests(CommonFixture fixture) : IClassFixture<CommonFix
     [Fact]
     public async Task SaveAnswersAsync_IncorrectSurveyId_ThrowExceptionQuestionsNotFound()
     {
-        using var scope = GetSurveyService(out var surveyService);
-
         const int surveyId = 100;
+        
+        using var scope = GetSurveyService(out var surveyService);
+        
         var answers = new SurveyAnswersDto
         {
             UserId = 5,
@@ -179,10 +180,11 @@ public class SurveyServiceTests(CommonFixture fixture) : IClassFixture<CommonFix
     [Fact]
     public async Task SaveAnswersAsync_IncorrectQuestionId_ThrowExceptionQuestionNotFound()
     {
-        using var scope = GetSurveyService(out var surveyService);
-
         const int surveyId = 1;
         const int questionId = 100;
+        
+        using var scope = GetSurveyService(out var surveyService);
+        
         var answers = new SurveyAnswersDto
         {
             UserId = 5,
@@ -202,9 +204,10 @@ public class SurveyServiceTests(CommonFixture fixture) : IClassFixture<CommonFix
     [Fact]
     public async Task SaveAnswersAsync_IncorrectAnswerType_ThrowExceptionImpossibleToCast()
     {
-        using var scope = GetSurveyService(out var surveyService);
-
         const string incorrectBoolean = "incorrectBoolean";
+        
+        using var scope = GetSurveyService(out var surveyService);
+        
         var answers = new SurveyAnswersDto
         {
             UserId = 5,
