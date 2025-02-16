@@ -6,11 +6,7 @@ namespace RefactorMe.Dal;
 public class AppDbContext: DbContext
 {
     public AppDbContext(){}
-    
-    public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
-    { 
-        // Any additional setup can be added here
-    }
+    public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) {}
 
     public void EnsureDatabaseCreated()
     {
