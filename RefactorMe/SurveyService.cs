@@ -27,7 +27,7 @@ public class SurveyService(AppDbContext db)
                     Id = q.Id,
                     Type = q.AnswerType,
                     Text = q.Text
-                }).ToArray() // Convert questions to an array
+                }).ToArray()
             })
             .ToArray();
     }

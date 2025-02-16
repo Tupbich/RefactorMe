@@ -11,7 +11,6 @@
  - В реальной БД нужно сохранять ответы на все вопросы, чтобы иметь всю полноту исторических данных, а не только результат
  - В реальном решении - часть тестов должны быть вынесены как Unit тесты в отдельный проект, сейчас всё вместе
  - Можно уйти в хранимые процедуры, и raw SQL, тогда будет не универсальное решение, но можно получить быстродействие получше
- - Комментарии и сообщения на английском языке, можно на русском, я не знаю какие требования в компании
 
 ### Дополнительное задание
 
@@ -31,7 +30,7 @@
     ),results30daysCte as (
         select sr.UserId, count(distinct(sr.SurveyId)) as Surveys30Days, sum(sr.Score) as ScoreSum30Days
         from SurveyResults sr
-        where sr.CreatedAt > DATEADD(day, -30, getutcdate()) -- possible need to cast to begginning of the day by local time
+        where sr.CreatedAt > DATEADD(day, -30, getutcdate()) -- возможно следует привести к началу дня по локальному времени
         group by sr.UserId
     )
      select u.[Name]
@@ -107,7 +106,7 @@
       WHERE [s].[SurveyId] = @__surveyId_0
       
       -- Parameters=[@p0='2025-02-16T10:49:44.5234943Z' (DbType = DateTime), @p1='2', @p2='1', @p3='3']
-      INSERT INTO [SurveyResults] ([CreatedOn], [Score], [SurveyId], [UserId])  
+      INSERT INTO [SurveyResults] ([CreatedOn], [Score], [SurveyId], [UserId])
       OUTPUT INSERTED.[Id]
       VALUES (@p0, @p1, @p2, @p3);
 ```
